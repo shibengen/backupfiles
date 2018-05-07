@@ -2,7 +2,7 @@
 * @Author: shibengen
 * @Date:   2018-04-28 14:59:28
 * @Last Modified by:   shibengen
-* @Last Modified time: 2018-05-04 17:37:06
+* @Last Modified time: 2018-05-07 15:21:42
  */
 package main
 
@@ -24,14 +24,6 @@ var (
 	conf       = make(map[string]string)
 )
 
-//读取文件需要经常进行错误检查，这个帮助方法可以精简下面的错误检查过程。
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-//
 func pause() {
 	fmt.Println("请按任意键继续...")
 Loop:
