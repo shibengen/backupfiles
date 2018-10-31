@@ -2,7 +2,7 @@
 * @Author: shibengen
 * @Date:   2018-04-28 14:59:28
 * @Last Modified by:   shibengen
-* @Last Modified time: 2018-05-07 15:21:42
+* @Last Modified time: 2018-10-31 11:36:17
  */
 package main
 
@@ -66,23 +66,31 @@ func main() {
 	days, _ := strconv.ParseInt(conf["delete_day"], 10, 64)
 	timestamp := time.Now().Unix() - (86400 * days)
 	mode := conf["mode"]
+	debug := conf["debug"]
 	basepath := conf["to_dir"]
 	subdir := time.Now().Format("2006_01_02")
 	if mode == "hour" {
-		subdir = subdir + "/" + time.Unix(timestamp, 0).Format("2006_01_02_15")
+		subdir = subdir + "/" + time.Now().Format("2006_01_02_15")
 	} else if mode == "minute" {
-		subdir = subdir + "/" + time.Unix(timestamp, 0).Format("2006_01_02_15_04")
+		subdir = subdir + "/" + time.Now().Format("2006_01_02_15_04")
 	}
 	//copy
 	output := cp.CopyDir(conf["from_dir"], conf["to_dir"]+"/"+subdir)
-	//删除N天前的备份 2006-01-02 15:04:05 默认按天删除
-	del_path := basepath + "/" + time.Unix(timestamp, 0).Format("2006_01_02")
-	os.RemoveAll(del_path)
-	if output != nil {
-		log.Println(del_path)
-		log.Println(subdir)
+	//删除N天前的 30天备份 2006-01-02 15:04:05
+	for i := 29; i >= 0; i-- {
+		var i64 int64
+		i64 = int64(i)
+		timestamp2 := timestamp - (86400 * i64)
+		del_path := basepath + "/" + time.Unix(timestamp2, 0).Format("2006_01_02")
+		os.RemoveAll(del_path)
+		if debug == "1" {
+			log.Println(del_path)
+		}
+	}
+	if debug == "1" {
 		log.Println(output)
-		pause()
+		log.Println(subdir)
+		// pause()
 	}
 
 }
